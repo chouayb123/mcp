@@ -190,16 +190,16 @@ Add this server to your Claude Desktop configuration file `claude_desktop_config
 ### NPX
 ```bash
 {
-  "mcpServers": 
-    "haloscan": 
+  "mcpServers": {
+    "haloscan": {
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/haloscan-server",
-        "start"  
+        "@occirank/haloscan-server",
+        "start"
       ],
       "env": {
-        "HALOSCAN_API_KEY": "haloscan_api_key"
+        "HALOSCAN_API_KEY": "YOUR API KEY"
       }
     }
   }

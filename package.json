@@ -1,5 +1,5 @@
 {
-  "name": "@modelcontextprotocol/haloscan-server",
+  "name": "@occirank/haloscan-server",
   "version": "1.0.0",
   "description": "Model Context Protocol server for Haloscan SEO API",
   "license": "MIT",
