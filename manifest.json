@@ -1,0 +1,24 @@
+{
+  "dxt_version": "0.1",
+  "name": "@occirank/haloscan-server",
+  "version": "1.0.1",
+  "description": "Model Context Protocol server for Haloscan SEO API",
+  "author": {
+    "name": "Anthropic, PBC (https://anthropic.com)"
+  },
+  "server": {
+    "type": "node",
+    "entry_point": "build/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/build/index.js"
+      ],
+      "env": {}
+    }
+  },
+  "keywords": [
+    "n"
+  ],
+  "license": "MIT"
+}
