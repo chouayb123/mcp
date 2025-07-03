@@ -42,6 +42,21 @@ async function makeHaloscanRequest(endpoint, params = {}, method) {
         throw error;
     }
 }
+const commonParamsSchema = z.object({
+    cpc_min: z.number().describe(""),
+    cpc_max: z.number().describe(""),
+    competition_min: z.number().describe(""),
+    competition_max: z.number().describe(""),
+    kgr_min: z.number().describe(""),
+    kgr_max: z.number().describe(""),
+    kvi_min: z.number().describe(""),
+    kvi_max: z.number().describe(""),
+    kvi_keep_na: z.boolean().describe(""),
+    allintitle_min: z.number().describe(""),
+    allintitle_max: z.number().describe(""),
+    word_count_min: z.number().describe(""),
+    word_count_max: z.number().describe(""),
+});
 // Configuration function that adds all tools and prompts to a server instance
 export function configureHaloscanServer(server) {
     // Tool to set API key
@@ -103,11 +118,33 @@ export function configureHaloscanServer(server) {
     });
     // Tool to get keywords match
     server.tool("get_keywords_match", "Obtenir la correspondance des mots-clés.", {
-        keyword: z.string().describe("Seed keyword")
-    }, async ({ keyword }) => {
+        keyword: z.string().describe("Seed keyword"),
+        lineCount: z.number().describe("Max number of returned results."),
+        order_by: z.string().optional().describe("Field used for sorting results. Default sorts by descending volume."),
+        order: z.string().optional().describe("Whether the results are sorted in ascending or descending order."),
+        exact_match: z.string().optional().describe("When FALSE, always ignore accents, punctuation, case, special characters, etc. when matching the seed keyword."),
+        volume_min: z.number().describe(""),
+        volume_max: z.number().describe(""),
+        cpc_min: z.number().describe(""),
+        cpc_max: z.number().describe(""),
+        competition_min: z.number().describe(""),
+        competition_max: z.number().describe(""),
+        kgr_min: z.number().describe(""),
+        kgr_max: z.number().describe(""),
+        kvi_min: z.number().describe(""),
+        kvi_max: z.number().describe(""),
+        kvi_keep_na: z.boolean().describe(""),
+        allintitle_min: z.number().describe(""),
+        allintitle_max: z.number().describe(""),
+        word_count_min: z.number().describe(""),
+        word_count_max: z.number().describe(""),
+        include: z.string().describe(""),
+        exclude: z.string().describe("")
+    }, async ({ keyword, lineCount, order_by, order, exact_match, volume_min, volume_max, cpc_min, cpc_max, competition_min, competition_max, kgr_min, kgr_max, kvi_min, kvi_max, allintitle_min, allintitle_max, word_count_min, word_count_max, include, exclude }) => {
         try {
             const data = await makeHaloscanRequest("/keywords/match", {
-                keyword
+                keyword, lineCount, order_by, order, exact_match, volume_min, volume_max, cpc_min, cpc_max, competition_min, competition_max, kgr_min, kgr_max, kvi_min, kvi_max, allintitle_min,
+                allintitle_max, word_count_min, word_count_max, include, exclude
             }, "POST");
             return {
                 content: [{
@@ -128,11 +165,39 @@ export function configureHaloscanServer(server) {
     });
     // Tool to get keywords similar
     server.tool("get_keywords_similar", "Obtenir des mots-clés similaires.", {
-        keyword: z.string().describe("Seed keyword")
-    }, async ({ keyword }) => {
+        keyword: z.string().describe("Seed keyword"),
+        lineCount: z.number().describe("Max number of returned results."),
+        order_by: z.string().optional().describe("Field used for sorting results. Default sorts by descending volume."),
+        order: z.string().optional().describe("Whether the results are sorted in ascending or descending order."),
+        exact_match: z.string().optional().describe("When FALSE, always ignore accents, punctuation, case, special characters, etc. when matching the seed keyword."),
+        similarity_min: z.number().describe(""),
+        similarity_max: z.number().describe(""),
+        volume_min: z.number().describe(""),
+        volume_max: z.number().describe(""),
+        cpc_min: z.number().describe(""),
+        cpc_max: z.number().describe(""),
+        competition_min: z.number().describe(""),
+        competition_max: z.number().describe(""),
+        kgr_min: z.number().describe(""),
+        kgr_max: z.number().describe(""),
+        kvi_min: z.number().describe(""),
+        kvi_max: z.number().describe(""),
+        kvi_keep_na: z.boolean().describe(""),
+        allintitle_min: z.number().describe(""),
+        allintitle_max: z.number().describe(""),
+        score_min: z.number().describe(""),
+        score_max: z.number().describe(""),
+        p1_score_min: z.number().describe(""),
+        p1_score_max: z.number().describe(""),
+        word_count_min: z.number().describe(""),
+        word_count_max: z.number().describe(""),
+        include: z.string().describe(""),
+        exclude: z.string().describe("")
+    }, async ({ keyword, lineCount, order_by, order, exact_match, similarity_min, similarity_max, volume_min, volume_max, cpc_min, cpc_max, competition_min, competition_max, kgr_min, kgr_max, kvi_min, kvi_max, kvi_keep_na, allintitle_min, allintitle_max, score_min, score_max, p1_score_min, p1_score_max, word_count_min, word_count_max, include, exclude }) => {
         try {
             const data = await makeHaloscanRequest("/keywords/similar", {
-                keyword
+                keyword, lineCount, order_by, order, exact_match, similarity_min, similarity_max, volume_min, volume_max, cpc_min, cpc_max, competition_min, competition_max, kgr_min, kgr_max, kvi_min,
+                kvi_max, kvi_keep_na, allintitle_min, allintitle_max, score_min, score_max, p1_score_min, p1_score_max, word_count_min, word_count_max, include, exclude
             }, "POST");
             return {
                 content: [{
@@ -153,11 +218,12 @@ export function configureHaloscanServer(server) {
     });
     // Tool to get keywords highlights
     server.tool("get_keywords_highlights", "Obtenir les points forts des mots-clés.", {
-        keyword: z.string().describe("Seed keyword")
-    }, async ({ keyword }) => {
+        ...commonParamsSchema.shape,
+        keywords: z.array(z.string()).describe("Seed keywords")
+    }, async ({ keywords }) => {
         try {
             const data = await makeHaloscanRequest("/keywords/highlights", {
-                keyword
+                keywords
             }, "POST");
             return {
                 content: [{
