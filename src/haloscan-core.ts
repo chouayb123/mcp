@@ -53,19 +53,29 @@ async function makeHaloscanRequest(endpoint : string, params : Record<string, an
 
 
 const commonParamsSchema = z.object({
-  cpc_min: z.number().describe(""),
-  cpc_max: z.number().describe(""),
-  competition_min: z.number().describe(""),
-  competition_max: z.number().describe(""),
-  kgr_min: z.number().describe(""),
-  kgr_max: z.number().describe(""),
-  kvi_min: z.number().describe(""),
-  kvi_max: z.number().describe(""),
-  kvi_keep_na: z.boolean().describe(""),
-  allintitle_min: z.number().describe(""),
-  allintitle_max: z.number().describe(""),
-  word_count_min: z.number().describe(""),
-  word_count_max: z.number().describe(""),
+    lineCount: z.number().describe(""),
+    order_by: z.string().optional().describe(""),
+    order: z.string().optional().describe(""),
+    exact_match: z.boolean().optional().describe(""),
+    volume_min: z.number().describe(""),
+    volume_max: z.number().describe(""),
+    similarity_min: z.number().describe(""),
+    similarity_max: z.number().describe(""),
+    cpc_min: z.number().describe(""),
+    cpc_max: z.number().describe(""),
+    competition_min: z.number().describe(""),
+    competition_max: z.number().describe(""),
+    kgr_min: z.number().describe(""),
+    kgr_max: z.number().describe(""),
+    kvi_min: z.number().describe(""),
+    kvi_max: z.number().describe(""),
+    kvi_keep_na: z.boolean().describe(""),
+    allintitle_min: z.number().describe(""),
+    allintitle_max: z.number().describe(""),
+    word_count_min: z.number().describe(""),
+    word_count_max: z.number().describe(""),
+    include: z.string().describe(""),
+    exclude: z.string().describe("")
 });
 
 
@@ -237,15 +247,14 @@ export function configureHaloscanServer(server:McpServer) {
     });
 
     // Tool to get keywords highlights
-    server.tool("get_keywords_highlights", "Obtenir les points forts des mots-clés.", 
-    {
-        ...commonParamsSchema.shape,
-        keywords: z.array(z.string()).describe("Seed keywords")
-    }, async ({ keywords, ...commonParams }) => {
+    server.tool("get_keywords_highlights", "Obtenir les points forts des mots-clés.", {
+        keyword: z.string().describe("Seed keyword"),
+        ...commonParamsSchema.shape
+    }, async ({ keyword, ...commonParams }) => {
         try {
             const data = await makeHaloscanRequest("/keywords/highlights", {
-                ...commonParams,
-                keywords
+                keyword,
+                ...commonParams
             }, "POST");
             return {
                 content: [{

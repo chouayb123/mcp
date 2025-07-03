@@ -43,6 +43,14 @@ async function makeHaloscanRequest(endpoint, params = {}, method) {
     }
 }
 const commonParamsSchema = z.object({
+    lineCount: z.number().describe(""),
+    order_by: z.string().optional().describe(""),
+    order: z.string().optional().describe(""),
+    exact_match: z.boolean().optional().describe(""),
+    volume_min: z.number().describe(""),
+    volume_max: z.number().describe(""),
+    similarity_min: z.number().describe(""),
+    similarity_max: z.number().describe(""),
     cpc_min: z.number().describe(""),
     cpc_max: z.number().describe(""),
     competition_min: z.number().describe(""),
@@ -56,6 +64,8 @@ const commonParamsSchema = z.object({
     allintitle_max: z.number().describe(""),
     word_count_min: z.number().describe(""),
     word_count_max: z.number().describe(""),
+    include: z.string().describe(""),
+    exclude: z.string().describe("")
 });
 // Configuration function that adds all tools and prompts to a server instance
 export function configureHaloscanServer(server) {
@@ -218,12 +228,13 @@ export function configureHaloscanServer(server) {
     });
     // Tool to get keywords highlights
     server.tool("get_keywords_highlights", "Obtenir les points forts des mots-clés.", {
-        ...commonParamsSchema.shape,
-        keywords: z.array(z.string()).describe("Seed keywords")
-    }, async ({ keywords }) => {
+        keyword: z.string().describe("Seed keyword"),
+        ...commonParamsSchema.shape
+    }, async ({ keyword, ...commonParams }) => {
         try {
             const data = await makeHaloscanRequest("/keywords/highlights", {
-                keywords
+                keyword,
+                ...commonParams
             }, "POST");
             return {
                 content: [{
