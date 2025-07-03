@@ -3,7 +3,9 @@
 A Model Context Protocol (MCP) server for interacting with the Haloscan SEO API.  
 This server allows easy integration with Claude for Desktop, N8N, and other MCP-compatible clients.
 
-
+<a href="https://glama.ai/mcp/servers/@chouayb123/mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@chouayb123/mcp/badge" alt="Haloscan Server MCP server" />
+</a>
 
 ## Features
 
