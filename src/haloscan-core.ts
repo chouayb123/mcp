@@ -241,9 +241,10 @@ export function configureHaloscanServer(server:McpServer) {
     {
         ...commonParamsSchema.shape,
         keywords: z.array(z.string()).describe("Seed keywords")
-    }, async ({ keywords }) => {
+    }, async ({ keywords, ...commonParams }) => {
         try {
             const data = await makeHaloscanRequest("/keywords/highlights", {
+                ...commonParams,
                 keywords
             }, "POST");
             return {
