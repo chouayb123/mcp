@@ -53,7 +53,6 @@ async function makeHaloscanRequest(endpoint : string, params : Record<string, an
 
 
 const commonParamsSchema = z.object({
-    lineCount: z.number().describe(""),
     order_by: z.string().optional().describe(""),
     order: z.string().optional().describe(""),
     exact_match: z.boolean().optional().describe(""),
@@ -248,12 +247,14 @@ export function configureHaloscanServer(server:McpServer) {
 
     // Tool to get keywords highlights
     server.tool("get_keywords_highlights", "Obtenir les points forts des mots-clés.", {
-        keyword: z.string().describe("Seed keyword"),
+        keyword: z.string().describe(""),
+        lineCount: z.number().describe(""),
         ...commonParamsSchema.shape
-    }, async ({ keyword, ...commonParams }) => {
+    }, async ({ keyword, lineCount, ...commonParams }) => {
         try {
             const data = await makeHaloscanRequest("/keywords/highlights", {
                 keyword,
+                lineCount,
                 ...commonParams
             }, "POST");
             return {
